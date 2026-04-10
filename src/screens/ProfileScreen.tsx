@@ -1,15 +1,24 @@
-import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Alert } from "react-native";
+import React, { useState } from "react";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { useSubscription } from "../hooks/use-subscription";
 import { ProUpgradeCard } from "../components/ProUpgradeCard";
+import { PaywallModal } from "../components/PaywallModal";
 
 export function ProfileScreen() {
-  // Note: useSubscription hook will be added in Task 9
-  const isProUser = false;
+  const { isProUser, refresh } = useSubscription();
+  const [showPaywall, setShowPaywall] = useState(false);
 
   return (
     <View style={styles.container}>
       {!isProUser && (
-        <ProUpgradeCard onPress={() => Alert.alert("訂閱", "即將開啟訂閱流程...")} />
+        <>
+          <ProUpgradeCard onPress={() => setShowPaywall(true)} />
+          <PaywallModal
+            visible={showPaywall}
+            onClose={() => setShowPaywall(false)}
+            onPurchased={() => refresh()}
+          />
+        </>
       )}
       <TouchableOpacity style={styles.row}>
         <Text style={styles.rowText}>收藏的股票</Text>

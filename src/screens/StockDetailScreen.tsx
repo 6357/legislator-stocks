@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, FlatList, StyleSheet, ActivityIndicator } from "react-native";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import { useStockDetail } from "../hooks/use-stock-detail";
+import { useSubscription } from "../hooks/use-subscription";
 import { ValuationCard } from "../components/ValuationCard";
 import { LegislatorRow } from "../components/LegislatorRow";
 import { ProUpgradeCard } from "../components/ProUpgradeCard";
+import { PaywallModal } from "../components/PaywallModal";
 
 type RootStackParamList = {
   StockDetail: { stockId: string };
@@ -13,8 +15,8 @@ type RootStackParamList = {
 export function StockDetailScreen() {
   const route = useRoute<RouteProp<RootStackParamList, "StockDetail">>();
   const { stock, holders, valuation, loading } = useStockDetail(route.params.stockId);
-  // Note: useSubscription will be added in Task 9
-  const isProUser = false;
+  const { isProUser, refresh } = useSubscription();
+  const [showPaywall, setShowPaywall] = useState(false);
 
   if (loading || !stock) {
     return <ActivityIndicator style={styles.loader} />;
@@ -35,7 +37,14 @@ export function StockDetailScreen() {
             {isProUser && valuation ? (
               <ValuationCard valuation={valuation} />
             ) : !isProUser ? (
-              <ProUpgradeCard onPress={() => {}} />
+              <>
+                <ProUpgradeCard onPress={() => setShowPaywall(true)} />
+                <PaywallModal
+                  visible={showPaywall}
+                  onClose={() => setShowPaywall(false)}
+                  onPurchased={() => refresh()}
+                />
+              </>
             ) : null}
 
             <Text style={styles.sectionTitle}>持有此股票的立委</Text>
