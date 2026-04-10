@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Text } from "react-native";
+import { initRevenueCat } from "./src/lib/revenue-cat";
 import { StockSearchScreen } from "./src/screens/StockSearchScreen";
 import { RankingScreen } from "./src/screens/RankingScreen";
 import { ProfileScreen } from "./src/screens/ProfileScreen";
@@ -54,6 +55,10 @@ function TabNavigator() {
 }
 
 export default function App() {
+  useEffect(() => {
+    initRevenueCat();
+  }, []);
+
   return (
     <NavigationContainer>
       <Stack.Navigator>
