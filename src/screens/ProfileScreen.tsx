@@ -1,8 +1,11 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Linking } from "react-native";
 import { useSubscription } from "../hooks/use-subscription";
 import { ProUpgradeCard } from "../components/ProUpgradeCard";
 import { PaywallModal } from "../components/PaywallModal";
+
+const PRIVACY_POLICY_URL = "https://YOUR_DOMAIN/privacy-policy";
+const TERMS_OF_SERVICE_URL = "https://YOUR_DOMAIN/terms-of-service";
 
 export function ProfileScreen() {
   const { isProUser, refresh } = useSubscription();
@@ -26,6 +29,14 @@ export function ProfileScreen() {
       </TouchableOpacity>
       <TouchableOpacity style={styles.row}>
         <Text style={styles.rowText}>推播通知設定</Text>
+        <Text style={styles.rowArrow}>▶</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.row} onPress={() => Linking.openURL(PRIVACY_POLICY_URL)}>
+        <Text style={styles.rowText}>隱私權政策</Text>
+        <Text style={styles.rowArrow}>▶</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.row} onPress={() => Linking.openURL(TERMS_OF_SERVICE_URL)}>
+        <Text style={styles.rowText}>使用條款</Text>
         <Text style={styles.rowArrow}>▶</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.row}>
