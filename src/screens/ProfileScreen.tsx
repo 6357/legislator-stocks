@@ -4,8 +4,10 @@ import { useSubscription } from "../hooks/use-subscription";
 import { ProUpgradeCard } from "../components/ProUpgradeCard";
 import { PaywallModal } from "../components/PaywallModal";
 
-const PRIVACY_POLICY_URL = "https://YOUR_DOMAIN/privacy-policy";
-const TERMS_OF_SERVICE_URL = "https://YOUR_DOMAIN/terms-of-service";
+// TODO: 上架前替換成你的 GitHub Pages URL
+// 格式：https://你的GitHub帳號.github.io/legislator-stocks/privacy-policy
+const PRIVACY_POLICY_URL = "https://YOUR_GITHUB_USERNAME.github.io/legislator-stocks/privacy-policy.html";
+const TERMS_OF_SERVICE_URL = "https://YOUR_GITHUB_USERNAME.github.io/legislator-stocks/terms-of-service.html";
 
 export function ProfileScreen() {
   const { isProUser, refresh } = useSubscription();
