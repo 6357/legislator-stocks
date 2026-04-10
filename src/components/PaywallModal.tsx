@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Alert,
   ActivityIndicator,
+  Linking,
 } from "react-native";
 import {
   purchaseMonthly,
@@ -35,7 +36,7 @@ export function PaywallModal({ visible, onClose, onPurchased }: Props) {
       onClose();
     } catch (e: any) {
       if (!e.userCancelled) {
-        Alert.alert("Purchase Failed", e.message);
+        Alert.alert("購買失敗", e.message);
       }
     } finally {
       setPurchasing(false);
@@ -50,10 +51,10 @@ export function PaywallModal({ visible, onClose, onPurchased }: Props) {
         onPurchased();
         onClose();
       } else {
-        Alert.alert("Restore Purchase", "No previous subscription found");
+        Alert.alert("恢復購買", "找不到之前的訂閱紀錄");
       }
     } catch (e: any) {
-      Alert.alert("Restore Failed", e.message);
+      Alert.alert("恢復失敗", e.message);
     } finally {
       setPurchasing(false);
     }
@@ -63,9 +64,9 @@ export function PaywallModal({ visible, onClose, onPurchased }: Props) {
     <Modal visible={visible} animationType="slide" transparent>
       <View style={styles.overlay}>
         <View style={styles.sheet}>
-          <Text style={styles.title}>Upgrade to PRO</Text>
+          <Text style={styles.title}>升級 PRO</Text>
           <Text style={styles.subtitle}>
-            Unlock Buffett valuation scale and push notifications
+            解鎖巴菲特估值體重機、推播通知
           </Text>
 
           {purchasing ? (
@@ -76,8 +77,8 @@ export function PaywallModal({ visible, onClose, onPurchased }: Props) {
                 style={styles.option}
                 onPress={() => handlePurchase("monthly")}
               >
-                <Text style={styles.optionTitle}>Monthly</Text>
-                <Text style={styles.optionPrice}>NT$99 / mo</Text>
+                <Text style={styles.optionTitle}>月費方案</Text>
+                <Text style={styles.optionPrice}>NT$99 / 月</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
@@ -85,20 +86,40 @@ export function PaywallModal({ visible, onClose, onPurchased }: Props) {
                 onPress={() => handlePurchase("annual")}
               >
                 <View>
-                  <Text style={styles.optionTitle}>Annual</Text>
-                  <Text style={styles.optionDiscount}>Save 16%</Text>
+                  <Text style={styles.optionTitle}>年費方案</Text>
+                  <Text style={styles.optionDiscount}>省 16%</Text>
                 </View>
-                <Text style={styles.optionPrice}>NT$999 / yr</Text>
+                <Text style={styles.optionPrice}>NT$999 / 年</Text>
               </TouchableOpacity>
 
+              <Text style={styles.autoRenewText}>
+                訂閱將自動續訂，可隨時在 iPhone 設定中取消
+              </Text>
+
+              <View style={styles.legalLinks}>
+                <Text
+                  style={styles.legalLink}
+                  onPress={() => Linking.openURL("https://6357.github.io/legislator-stocks/privacy-policy.html")}
+                >
+                  隱私權政策
+                </Text>
+                <Text style={styles.legalSeparator}>｜</Text>
+                <Text
+                  style={styles.legalLink}
+                  onPress={() => Linking.openURL("https://6357.github.io/legislator-stocks/terms-of-service.html")}
+                >
+                  使用條款
+                </Text>
+              </View>
+
               <TouchableOpacity style={styles.restore} onPress={handleRestore}>
-                <Text style={styles.restoreText}>Restore Purchase</Text>
+                <Text style={styles.restoreText}>恢復購買</Text>
               </TouchableOpacity>
             </>
           )}
 
           <TouchableOpacity style={styles.close} onPress={onClose}>
-            <Text style={styles.closeText}>Cancel</Text>
+            <Text style={styles.closeText}>取消</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -138,6 +159,10 @@ const styles = StyleSheet.create({
   optionTitle: { fontSize: 16, fontWeight: "bold" },
   optionPrice: { fontSize: 16, fontWeight: "bold", color: "#667eea" },
   optionDiscount: { fontSize: 12, color: "#666", marginTop: 2 },
+  autoRenewText: { fontSize: 12, color: "#999", textAlign: "center", marginTop: 12 },
+  legalLinks: { flexDirection: "row", justifyContent: "center", marginTop: 8 },
+  legalLink: { fontSize: 12, color: "#007AFF" },
+  legalSeparator: { fontSize: 12, color: "#ccc", marginHorizontal: 4 },
   restore: { alignItems: "center", marginTop: 12 },
   restoreText: { fontSize: 14, color: "#007AFF" },
   close: { alignItems: "center", marginTop: 16 },

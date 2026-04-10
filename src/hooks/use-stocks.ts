@@ -17,7 +17,8 @@ export function useStocks(search: string, sector: string | null) {
         .select("*");
 
       if (search.trim()) {
-        query = query.ilike("name", `%${search.trim()}%`);
+        const term = search.trim();
+        query = query.or(`name.ilike.%${term}%,symbol.ilike.%${term}%`);
       }
       if (sector) {
         query = query.eq("sector", sector);

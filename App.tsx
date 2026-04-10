@@ -56,7 +56,9 @@ function TabNavigator() {
 
 export default function App() {
   useEffect(() => {
-    initRevenueCat();
+    initRevenueCat().catch(() => {
+      // RevenueCat not available in Expo Go — works in production builds
+    });
   }, []);
 
   return (

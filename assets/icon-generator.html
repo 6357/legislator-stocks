@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<title>Icon Generator - 立委持股追蹤</title>
+<style>
+  body {
+    background: #1a1a2e;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0;
+    font-family: -apple-system, sans-serif;
+    color: #fff;
+  }
+  h1 { margin-bottom: 1rem; font-size: 1.2rem; opacity: 0.7; }
+  .icons { display: flex; gap: 3rem; align-items: flex-end; }
+  .icon-wrapper { text-align: center; }
+  .icon-wrapper p { margin-top: 0.5rem; opacity: 0.5; font-size: 0.85rem; }
+  canvas { border-radius: 18%; image-rendering: auto; }
+</style>
+</head>
+<body>
+<h1>立委持股追蹤 - App Icons</h1>
+<div class="icons">
+  <div class="icon-wrapper">
+    <canvas id="icon" width="1024" height="1024" style="width:256px;height:256px;"></canvas>
+    <p>icon.png (1024x1024)</p>
+    <button onclick="download('icon',1024)">Download</button>
+  </div>
+  <div class="icon-wrapper">
+    <canvas id="splash" width="200" height="200" style="width:200px;height:200px;"></canvas>
+    <p>splash-icon.png (200x200)</p>
+    <button onclick="download('splash',200)">Download</button>
+  </div>
+</div>
+
+<script>
+function drawIcon(canvasId, size) {
+  const c = document.getElementById(canvasId);
+  const ctx = c.getContext('2d');
+
+  // Gradient background
+  const grad = ctx.createLinearGradient(0, 0, 0, size);
+  grad.addColorStop(0, '#667eea');
+  grad.addColorStop(1, '#764ba2');
+
+  if (canvasId === 'splash') {
+    // Rounded rect
+    const r = size * 0.18, p = size * 0.05;
+    ctx.beginPath();
+    ctx.roundRect(p, p, size - 2*p, size - 2*p, r);
+    ctx.fillStyle = grad;
+    ctx.fill();
+  } else {
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, size, size);
+  }
+
+  const cx = size / 2, cy = size / 2;
+  const s = size / 1024; // scale factor
+
+  // Bar chart
+  const bars = [0.4, 0.6, 0.45, 0.75, 0.55, 0.9];
+  const chartW = 560 * s, chartH = 340 * s;
+  const chartCx = cx, chartCy = cy + 60 * s;
+  const barW = chartW * 0.8 / bars.length * 0.65;
+  const gap = chartW * 0.8 / bars.length * 0.35;
+  const startX = chartCx - chartW * 0.4;
+
+  ctx.fillStyle = 'rgba(255,255,255,0.7)';
+  bars.forEach((h, i) => {
+    const bx = startX + i * (barW + gap);
+    const bh = chartH * h;
+    const by = chartCy + chartH / 2 - bh;
+    const r = barW * 0.25;
+    ctx.beginPath();
+    ctx.roundRect(bx, by, barW, bh, [r, r, 0, 0]);
+    ctx.fill();
+  });
+
+  // Trend line
+  const pts = [[0,0.7],[0.15,0.55],[0.3,0.65],[0.5,0.4],[0.7,0.45],[0.85,0.2],[1.0,0.1]];
+  const lw = 560 * s, lh = 300 * s;
+  const lsx = cx - lw/2, lsy = cy - lh/2 - 20*s;
+
+  ctx.strokeStyle = '#fff';
+  ctx.lineWidth = Math.max(4, 12 * s);
+  ctx.lineJoin = 'round';
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  pts.forEach((p, i) => {
+    const x = lsx + p[0] * lw, y = lsy + p[1] * lh;
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  });
+  ctx.stroke();
+
+  // Arrow
+  const [ex, ey] = [lsx + lw, lsy + 0.1 * lh];
+  const as = 36 * s;
+  ctx.fillStyle = '#fff';
+  ctx.beginPath();
+  ctx.moveTo(ex + as*0.5, ey - as*0.3);
+  ctx.lineTo(ex - as*0.5, ey - as);
+  ctx.lineTo(ex - as*0.8, ey + as*0.2);
+  ctx.fill();
+
+  // Building
+  const bldCx = cx, bldCy = cy - 250 * s;
+  const bldW = 240 * s, bldH = 140 * s;
+  ctx.fillStyle = '#fff';
+
+  // Base
+  ctx.fillRect(bldCx - bldW/2, bldCy + bldH*0.3, bldW, bldH*0.2);
+
+  // Columns
+  for (let i = 0; i < 5; i++) {
+    const x = bldCx - bldW*0.4 + i * (bldW*0.8/4);
+    ctx.fillRect(x - bldW*0.03, bldCy - bldH*0.05, bldW*0.06, bldH*0.35);
+  }
+
+  // Pediment
+  ctx.beginPath();
+  ctx.moveTo(bldCx - bldW*0.5, bldCy - bldH*0.05);
+  ctx.lineTo(bldCx, bldCy - bldH*0.2);
+  ctx.lineTo(bldCx + bldW*0.5, bldCy - bldH*0.05);
+  ctx.fill();
+
+  // Dome
+  ctx.beginPath();
+  const dr = bldW * 0.12;
+  ctx.ellipse(bldCx, bldCy - bldH*0.2 - dr*0.9, dr, dr*0.9, 0, 0, Math.PI*2);
+  ctx.fill();
+
+  // "立" character (only on large icon)
+  if (size >= 512) {
+    ctx.fillStyle = '#fff';
+    ctx.font = `${120*s}px "PingFang TC", "Noto Sans TC", sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+    ctx.fillText('立', cx, cy + 300*s);
+  }
+}
+
+drawIcon('icon', 1024);
+drawIcon('splash', 200);
+
+function download(id, size) {
+  const c = document.getElementById(id);
+  const a = document.createElement('a');
+  a.download = id === 'icon' ? 'icon.png' : 'splash-icon.png';
+  a.href = c.toDataURL('image/png');
+  a.click();
+}
+</script>
+</body>
+</html>

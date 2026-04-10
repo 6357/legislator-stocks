@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "legislator-stocks",
+    "name": "立委持股追蹤",
     "slug": "legislator-stocks",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -13,7 +13,8 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.clairechen.legislatorstocks"
     },
     "android": {
       "adaptiveIcon": {
@@ -25,6 +26,11 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "d51761b8-8072-4068-a171-8b384deee752"
+      }
     }
   }
 }

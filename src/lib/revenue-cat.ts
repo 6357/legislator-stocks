@@ -1,14 +1,22 @@
 import Purchases from "react-native-purchases";
 import { Platform } from "react-native";
+import Constants from "expo-constants";
 
 const API_KEYS = {
   ios: process.env.EXPO_PUBLIC_REVENUECAT_IOS_KEY!,
   android: process.env.EXPO_PUBLIC_REVENUECAT_ANDROID_KEY!,
 };
 
+const isExpoGo = Constants.appOwnership === "expo";
+
 export async function initRevenueCat() {
-  const apiKey = Platform.OS === "ios" ? API_KEYS.ios : API_KEYS.android;
-  await Purchases.configure({ apiKey });
+  if (isExpoGo) return;
+  try {
+    const apiKey = Platform.OS === "ios" ? API_KEYS.ios : API_KEYS.android;
+    await Purchases.configure({ apiKey });
+  } catch {
+    // RevenueCat not available
+  }
 }
 
 export async function getOfferings() {
@@ -31,8 +39,12 @@ export async function purchaseAnnual() {
 }
 
 export async function checkProStatus(): Promise<boolean> {
-  const customerInfo = await Purchases.getCustomerInfo();
-  return customerInfo.entitlements.active["pro"] !== undefined;
+  try {
+    const customerInfo = await Purchases.getCustomerInfo();
+    return customerInfo.entitlements.active["pro"] !== undefined;
+  } catch {
+    return false;
+  }
 }
 
 export async function restorePurchases() {

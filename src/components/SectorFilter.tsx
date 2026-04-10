@@ -30,7 +30,7 @@ export function SectorFilter({ selected, onSelect }: Props) {
 }
 
 const styles = StyleSheet.create({
-  container: { paddingHorizontal: 16, marginBottom: 12 },
+  container: { paddingHorizontal: 16, marginBottom: 12, flexGrow: 0 },
   pill: {
     backgroundColor: "#f0f0f0",
     borderRadius: 16,
